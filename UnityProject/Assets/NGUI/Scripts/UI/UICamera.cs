@@ -278,7 +278,7 @@ public class UICamera : MonoBehaviour
 	static GameObject mSel = null;
 
 	// Mouse events
-	public static MouseOrTouch[] mMouse = new MouseOrTouch[] { new MouseOrTouch(), new MouseOrTouch(), new MouseOrTouch() };
+	static MouseOrTouch[] mMouse = new MouseOrTouch[] { new MouseOrTouch(), new MouseOrTouch(), new MouseOrTouch() };
 
 	// The last object to receive OnHover
 	static GameObject mHover;
