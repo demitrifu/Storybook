@@ -24,8 +24,9 @@ public class UIPanelInspector : Editor
 		{
 			case EventType.MouseUp:
 			{
-				UIWidget[] widgets = NGUIEditorTools.Raycast(target as UIPanel, e.mousePosition);
-				if (widgets.Length > 0) Selection.activeGameObject = widgets[0].gameObject;
+				UIPanel panel = target as UIPanel;
+				BetterList<UIWidget> widgets = UIWidgetInspector.SceneViewRaycast(panel, e.mousePosition);
+				if (widgets.size > 0) Selection.activeGameObject = widgets[0].gameObject;
 			}
 			break;
 
@@ -182,7 +183,7 @@ public class UIPanelInspector : Editor
 				}
 			}
 
-#if !UNITY_3_5 && (UNITY_ANDROID || UNITY_IPHONE)
+#if !UNITY_3_5 && !UNITY_4_0 && (UNITY_ANDROID || UNITY_IPHONE)
 			if (PlayerSettings.targetGlesGraphics == TargetGlesGraphics.OpenGLES_1_x)
 			{
 				EditorGUILayout.HelpBox("Clipping requires shader support!\n\nOpen File -> Build Settings -> Player Settings -> Other Settings, then set:\n\n- Graphics Level: OpenGL ES 2.0.", MessageType.Error);

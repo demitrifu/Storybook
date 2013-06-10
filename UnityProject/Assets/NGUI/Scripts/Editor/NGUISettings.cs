@@ -25,6 +25,7 @@ public class NGUISettings
 	static string mAtlasName = "New Atlas";
 	static int mAtlasPadding = 1;
 	static public bool mAtlasTrimming = true;
+	static public bool mAtlasPMA = false;
 	static bool mUnityPacking = true;
 	static bool mForceSquare = true;
 	static bool mAllow4096 = false;
@@ -42,10 +43,6 @@ public class NGUISettings
 
 	static void Load ()
 	{
-		int l = LayerMask.NameToLayer("UI");
-		if (l == -1) l = LayerMask.NameToLayer("GUI");
-		if (l == -1) l = 31;
-
 		mLoaded			= true;
 		mPartial		= EditorPrefs.GetString("NGUI Partial");
 		mFontName		= EditorPrefs.GetString("NGUI Font Name");
@@ -56,13 +53,22 @@ public class NGUISettings
 		mAtlas			= GetObject("NGUI Atlas") as UIAtlas;
 		mAtlasPadding	= EditorPrefs.GetInt("NGUI Atlas Padding", 1);
 		mAtlasTrimming	= EditorPrefs.GetBool("NGUI Atlas Trimming", true);
+		mAtlasPMA		= EditorPrefs.GetBool("NGUI Atlas PMA", true);
 		mUnityPacking	= EditorPrefs.GetBool("NGUI Unity Packing", true);
 		mForceSquare	= EditorPrefs.GetBool("NGUI Force Square Atlas", true);
 		mPivot			= (UIWidget.Pivot)EditorPrefs.GetInt("NGUI Pivot", (int)mPivot);
-		mLayer			= EditorPrefs.GetInt("NGUI Layer", l);
+		mLayer			= EditorPrefs.GetInt("NGUI Layer", -1);
 		mDynFont		= GetObject("NGUI DynFont") as Font;
 		mDynFontSize	= EditorPrefs.GetInt("NGUI DynFontSize", 16);
 		mDynFontStyle	= (FontStyle)EditorPrefs.GetInt("NGUI DynFontStyle", (int)FontStyle.Normal);
+
+		if (mLayer < 0 || string.IsNullOrEmpty(LayerMask.LayerToName(mLayer))) mLayer = -1;
+
+		if (mLayer == -1) mLayer = LayerMask.NameToLayer("UI");
+		if (mLayer == -1) mLayer = LayerMask.NameToLayer("GUI");
+		if (mLayer == -1) mLayer = 5;
+
+		EditorPrefs.SetInt("UI Layer", mLayer);
 
 		LoadColor();
 	}
@@ -78,6 +84,7 @@ public class NGUISettings
 		EditorPrefs.SetInt("NGUI Atlas", (mAtlas != null) ? mAtlas.GetInstanceID() : -1);
 		EditorPrefs.SetInt("NGUI Atlas Padding", mAtlasPadding);
 		EditorPrefs.SetBool("NGUI Atlas Trimming", mAtlasTrimming);
+		EditorPrefs.SetBool("NGUI Atlas PMA", mAtlasPMA);
 		EditorPrefs.SetBool("NGUI Unity Packing", mUnityPacking);
 		EditorPrefs.SetBool("NGUI Force Square Atlas", mForceSquare);
 		EditorPrefs.SetInt("NGUI Pivot", (int)mPivot);
@@ -309,6 +316,12 @@ public class NGUISettings
 	/// </summary>
 
 	static public bool atlasTrimming { get { if (!mLoaded) Load(); return mAtlasTrimming; } set { if (mAtlasTrimming != value) { mAtlasTrimming = value; Save(); } } }
+
+	/// <summary>
+	/// Whether the transparent pixels will affect the color.
+	/// </summary>
+
+	static public bool atlasPMA { get { if (!mLoaded) Load(); return mAtlasPMA; } set { if (mAtlasPMA != value) { mAtlasPMA = value; Save(); } } }
 
 	/// <summary>
 	/// Whether Unity's method or MaxRectBinPack will be used when creating an atlas
